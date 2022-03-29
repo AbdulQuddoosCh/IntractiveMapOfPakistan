@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intractive Map of Pakistan</title>
+
+    <!-- css leaflet library -->
+    <link rel="stylesheet" href="libraries/leaflet/leaflet/leaflet.css" />
+    <!-- js leaflet lib -->
+    <script src="libraries/leaflet/leaflet/leaflet.js"></script>
+    <!-- Pak shp in geojson -->
+    <script src="data/Pakistan1.geojson"></script>
+
+    <style type="text/css">
+      #map {
+        height: 800px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Pakistan</h1>
+    <div id="map"></div>
+    <script>
+      function getPakColor(PROVINCE) {
+        if (PROVINCE == "Sindh") {
+          return "red";
+        } else if (PROVINCE == "Balochistan") {
+          return "blue";
+        } else if (PROVINCE == "Punjab") {
+          return "green";
+        } else if (PROVINCE == "Khyber Pakhtunkhwa") {
+          return "yellow";
+        } else if (PROVINCE == "Gilgit Baltistan") {
+          return "orange";
+        } else if (PROVINCE == "Azad Kashmir") {
+          return "purple";
+        } else if (PROVINCE == "Disputed Territory") {
+          return "coral";
+        } else if (PROVINCE == "Federal Capital Territory") {
+          return "bronze";
+        } else {
+          return "white";
+        }
+      }
+
+      function pakStyle(feature) {
+        return {
+          fillColor: getPakColor(feature.properties.PROVINCE),
+          weight: 2,
+          opacity: 1,
+          color: "white",
+          dashArray: 3,
+          fillOpacity: 0.7,
+        };
+      }
+
+      var locations = [
+        ["<b>Sindh</b>",24.86, 67.0011],
+        ["<b>Balochistan</b>",30.1832,66.9964],
+        ["<b>Punjab</b>", 31.52, 74.3587],
+        ["L<b>KPK</b>", 34.0151, 71.5249],
+        ["<b>GB</b>", 35.92, 74.308],
+        ["<b>AJK</b>", 34.3596, 73.47],
+        ["<b>J&K</b>", 34.0836, 74.7973],
+        ["<b>Islamabad</b", 33.6844, 73.0479],
+      ];
+
+      var map = L.map("map").setView([29, 72]);
+      var PakLayer = L.geoJson(Pak, { style: pakStyle }).addTo(map);
+      map.fitBounds(PakLayer.getBounds());
+
+      PakLayer.eachLayer((layer) => {
+        layer.bindTooltip(
+          "Population: " + layer.feature.properties.Pop_M + " Million"
+        );
+      });
+      mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+      L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; " + mapLink + " Contributors",
+        maxZoom: 17,
+      }).addTo(map);
+
+      for (var i = 0; i < locations.length; i++) {
+        marker = new L.marker([locations[i][1], locations[i][2]])
+          .bindPopup(locations[i][0])
+          .addTo(map);
+      }
+    </script>
+  </body>
+</html>
